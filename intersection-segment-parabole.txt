@@ -1,0 +1,45 @@
+x = x0 + v0*t + 0.5 * a * t^2
+
+(px, py)
+(ax, ay)
+(vx, vy)
+
+(px + vx*t + 0.5*ax*t^2, py + vy*t + 0.5*ay*t^2); 0 <= t <= dt
+
+(s0x, s0y)
+(s1x, s1y)
+(s1x-s0x, s1y-s0y)
+
+(s0x + u*(s1x-s0x), s0y + u*(s1y-s0y)); 0 <= u <= 1
+
+px + vx*t + 0.5*ax*t^2 = s0x + u*(s1x-s0x)
+py + vy*t + 0.5*ay*t^2 = s0y + u*(s1y-s0y)
+
+px + vx*t + 0.5*ax*t^2      s0x
+---------------------- = -------- + u
+     s1x - s0x            s1x-s0x
+
+py + vy*t + 0.5*ay*t^2      s0y
+---------------------- = -------- + u
+     s1y - s0y            s1y-s0y
+
+
+px + vx*t + 0.5*ax*t^2   py + vy*t + 0.5*ay*t^2     s0x       s0y
+---------------------- - ---------------------- = ------- - -------
+     s1x - s0x                 s1y - s0y          s1x-s0x   s1y-s0y
+     
+(px + vx*t + 0.5*ax*t^2)(s1y - s0y) - (py + vy*t + 0.5*ay*t^2)(s1x - s0x) = s0x(s1y-s0y) - s0y(s1x-s0x)
+
+px(s1y - s0y)-py(s1x - s0x) + [vx(s1y - s0y)-vy(s1x - s0x)]t + 0.5*[ax(s1y - s0y)-ay(s1x - s0x)]t^2 = s0x(s1y-s0y) - s0y(s1x-s0x)
+(px-s0x)(s1y - s0y)-(py-s0y)(s1x-s0x) + [vx(s1y - s0y)-vy(s1x - s0x)]t + 0.5*[ax(s1y - s0y)-ay(s1x - s0x)]t^2 = 0
+
+  (px-s0x)(s1y - s0y)-(py-s0y)(s1x-s0x)      vx(s1y - s0y)-vy(s1x - s0x)
+2 ------------------------------------- + 2 ----------------------------- t + t^2 = 0
+       ax(s1y - s0y)-ay(s1x - s0x)           ax(s1y - s0y)-ay(s1x - s0x)
+       
+                  C                                       B
+
+    
+    -B +- sqrt(B^2 - 4*C)
+t = ---------------------
+              2
