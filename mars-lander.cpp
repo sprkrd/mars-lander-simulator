@@ -29,7 +29,7 @@ void mars::Vector2D::operator+=(const Vector2D& vec) {
 }
 
 bool mars::Segment::isHorizontal() const {
-  return isBetween(1e-6, 1e-6, end.y - begin.y);
+  return isBetween(-1e-6, 1e-6, end.y - begin.y);
 }
 
 double mars::Parabola::operator()(double t) const {
@@ -63,8 +63,8 @@ mars::Context::Context() :
 mars::LanderState::LanderState(const Vector2D& position,
     const Vector2D& velocity, double rotation, double power, double fuel,
     const Context* context) :
-  _context(context), _status(FALLING), _position(position),
-  _velocity(velocity), _rotation(rotation), _power(power), _fuel(fuel) {
+  _context(context), _status(FALLING), _position(position), _velocity(velocity),
+  _rotation(rotation), _power(power), _fuel(fuel), _time(0) {
   
 }
 
@@ -102,6 +102,10 @@ double mars::LanderState::getFuel() const {
   return _fuel;
 }
 
+double mars::LanderState::getTime() const {
+  return _time;
+}
+
 bool mars::LanderState::isValidAction(const Action& action, const char** msg) const {
   double max_pow_inc = _context->max_pow_inc * _context->dt;
   if (not isBetween(-max_pow_inc, max_pow_inc, action.power-_power)) {
@@ -137,6 +141,7 @@ void mars::LanderState::step(const Action& action, bool check_valid) {
     _position = collision.position;
     _velocity = collision.velocity;
     _fuel -= _power*collision.t;
+    _time += collision.t;
     bool is_good_landing = collision.segment.isHorizontal() and
                            isBetween(-_context->max_vx, _context->max_vx, _velocity.x) and
                            isBetween(-_context->max_vy, _context->max_vy, _velocity.y);
@@ -147,6 +152,7 @@ void mars::LanderState::step(const Action& action, bool check_valid) {
     _position += ( _velocity + acceleration*(0.5*_context->dt) )*_context->dt;
     _velocity += acceleration*_context->dt;
     _fuel -= _power*_context->dt;
+    _time += _context->dt;
     if (_fuel < _power)
       _power = _fuel;
     bool within_bounds = isBetween(0, _context->width, _position.x) and
@@ -244,7 +250,8 @@ std::ostream& mars::operator<<(std::ostream& out, LanderState::Status status) {
 }
 
 std::ostream& mars::operator<<(std::ostream& out, const LanderState& state) {
- return out << "{status: "    << state.getStatus()
+ return out << "{time: "      << state.getTime()
+            << ", status: "   << state.getStatus()
             << ", position: " << state.getPosition()
             << ", velocity: " << state.getVelocity()
             << ", rotation: " << state.getRotation()

@@ -91,6 +91,8 @@ class LanderState {
 
     double getFuel() const;
 
+    double getTime() const;
+
     bool collisionTest(Collision* collision = nullptr) const;
 
     bool isValidAction(const Action& action, const char** msg = nullptr) const;
@@ -106,75 +108,23 @@ class LanderState {
     const Context* _context;
     Status _status;
     Vector2D _position, _velocity;
-    double _rotation, _power, _fuel;
+    double _rotation, _power, _fuel, _time;
 };
 
-//class Environment {
+//class environment {
   //public:
-    //Environment(const Context& context, const LanderInitialState& initial_state);
+    //environment(const context& context, const landerinitialstate& initial_state);
 
-    //const LanderState& getState() const;
+    //const landerstate& getstate() const;
 
-    //void step(const Action& action);
+    //void step(const action& action);
 
   //private:
-    //Context _context;
-    //LanderState _state;
+    //context _context;
+    //landerstate _state;
 //};
 
 bool isBetween(double lo, double hi, double x, double epsilon = 1e-12);
-
-//struct World {
-  //double width, height, gravity;
-  //std::vector<Vector2D> surface;
-  //World();
-//};
-
-//struct LanderConstraints {
-  //double max_power_increment, max_rotation_increment,
-         //power_limit, rotation_limit;
-  //LanderConstraints();
-//};
-
-//struct Context {
-  //World world;
-  //LanderConstraints lander_constraints;
-  //double dt; // simulation step
-  //Context(double simulation_step = 1);
-//};
-
-//enum class LanderStatus { FALLING, CRASHED, LOST, LANDED };
-
-//struct Action {
-  //double rotation;
-  //double power;
-//};
-
-//struct Collision {
-  //double t;
-  //Segment segment;
-  //Vector2D position, speed;
-//};
-
-//struct LanderState {
-  //const Context* context;
-  //LanderStatus status;
-  //Vector2D position, speed;
-  //double rotation, power, fuel;
-  //Vector2D getAcceleration() const;
-  //bool isValidAction(const Action& action, const char** msg = nullptr) const;
-  //void step(const Action& action, bool check_valid_action = true);
-  //LanderState getSuccessor(const Action& action, bool check_valid_action = true) const;
-//};
-
-//bool fastCollisionTest(const LanderState& state, const Segment& segment);
-
-//bool collisionTest(const LanderState& state, const Segment& segment, double dt,
-    //Collision* collision = nullptr);
-
-//bool collisionTest(const LanderState& state,
-    //const std::vector<Vector2D>& surface, double dt,
-    //Collision* collision = nullptr);
 
 std::ostream& operator<<(std::ostream& out, const Vector2D& vector);
 
