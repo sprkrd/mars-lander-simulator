@@ -7,21 +7,13 @@ int main(int argc, char* argv[]) {
   using namespace std;
   (void)argc;
   (void)argv;
-  //Environment env{7000, 3000, 3.711, {}};
-  //LanderState state{&env, LanderStatus::FALLING, {0,0}, {0,0}, 0, 0, 300};
-  //cout << state << endl;
-  //for (int i = 0; i < 10; ++i) {
-    //state = getSuccessor(state, {0,0});
-    //cout << state << endl;
-  //}
-  
-  Environment env{12, 2, 0, {}};
-  LanderState state{&env, LanderStatus::FALLING, {5,1.5}, {-2,-1}, 0, 1.25, 300};
+  Context context;
+  context.surface = vector<Vector2D>{{7000,500}, {0,500}};
+  LanderState state({3500,1000}, {0,0}, 0, 0, 350, &context);
   cout << state << endl;
-  Collision collision;
-  cout << collisionTest(state, Segment{{1,1},{5,1.2}}, 1, &collision) << endl;
-  cout << collision.t << endl;
-  cout << collision.position << endl;
-  cout << collision.speed << endl;
+  while (state.getStatus() == LanderState::FALLING) {
+    state.step({3, 5}, false);
+    cout << state << endl;
+  }
 }
 
