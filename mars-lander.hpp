@@ -111,6 +111,72 @@ class LanderState {
     double _rotation, _power, _fuel, _time;
 };
 
+//struct Context {
+  //Context();
+  //// world attributes
+  //double width, height, gravity;
+  //std::vector<Vector2D> surface;
+  //// lander constraints
+  //double max_pow_inc;
+  //double max_rot_inc;
+  //double max_power;
+  //double rot_limit;
+  //double max_vy;
+  //double max_vx;
+  //// simulation parameters
+  //double dt;
+//};
+
+enum class LanderStatus { FALLING, CRASHED, LOST, LANDED };
+
+struct State {
+  LanderStatus status;
+  Vector2D position, velocity;
+  double rotation, power, fuel;
+};
+
+struct Command {
+  double power, rotation;
+};
+
+class Environment {
+  public:
+    Environment();
+
+    void setWidth(double width);
+
+    void setHeight(double height);
+
+    void setGravity(double gravity);
+
+    void setSurface(const std::vector<Vector2D>& surface);
+
+    void setTimeStep(double time_step);
+
+    void setLanderState(const State& lander_state);
+
+    double getWidth() const;
+
+    double getHeight() const;
+
+    double getGravity() const;
+
+    const std::vector<Vector2D>& getSurface() const;
+
+    double getTimeStep() const;
+
+    const LanderState& getLanderState() const;
+
+    void issueCommand(const Command& command);
+
+    bool step();
+
+  private:
+    State
+    double _width, _height, _gravity, _total_time, _time_step;
+    std::vector<Vector2D> _surface;
+};
+
 //class environment {
   //public:
     //environment(const context& context, const landerinitialstate& initial_state);

@@ -219,6 +219,37 @@ bool mars::LanderState::collisionTest(Collision* collision) const {
   return collides;
 }
 
+mars::Environment::Environment() :
+  _width(k_default_width),
+  _height(k_default_height),
+  _gravity(k_default_gravity),
+  _total_time(0),
+  _time_step(k_default_time_step) {}
+
+void mars::Environment::setWidth(double width) {
+  _width = width;
+}
+
+void mars::Environment::setHeight(double height) {
+  _height = height;
+}
+
+void mars::Environment::setGravity(double gravity) {
+  _gravity = gravity;
+}
+
+void mars::Environment::setSurface(const std::vector<Vector2D>& surface) {
+  _surface = surface;
+}
+
+void mars::Environment::setTimeStep(double time_step) {
+  _time_step = time_step;
+}
+
+void mars::Environment::setLanderState(const State& lander_state) {
+}
+
+
 bool mars::isBetween(double lo, double hi, double x, double epsilon) {
   return x > lo-epsilon and x < hi+epsilon;
 }
