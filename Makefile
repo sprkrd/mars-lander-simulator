@@ -1,20 +1,20 @@
-all: main
+all: main-interactive
 
-OBJECTS=mars-lander.o
+OBJECTS=common.o environment.o lander.o
 
 CXX_FLAGS=-std=c++11 -O3 -Wall -Wextra -pedantic
 
-LD_LIBRARIES=-lsfml-system -lsfml-window -lsfml-graphics
+LD_SFML=-lsfml-system -lsfml-window -lsfml-graphics
 
 $(OBJECTS): %.o: %.cpp %.hpp
 	g++ -c $< $(CXX_FLAGS)
 
-main.o: main.cpp $(OBJECTS:.o=.hpp)
-	g++ -c main.cpp $(CXX_FLAGS)
+libmars.a: $(OBJECTS)
+	ar rcs libmars.a $(OBJECTS)
 
-main: main.o $(OBJECTS)
-	g++ -o main main.o $(OBJECTS) $(LD_LIBRARIES)
+main-interactive: main-interactive.cpp libmars.a
+	g++ $(CXX_FLAGS) -o main-interactive main-interactive.cpp -L. -lmars $(LD_SFML)
 
 clean:
-	rm -rf main *.o
+	rm -rf main-interactive *.o libmars.a
 
