@@ -49,6 +49,8 @@ class Lander {
 
     void setMaxVxForLanding(double max_vx);
 
+    void assignEnvironment(const Environment* environment, int id);
+
     const Environment* getEnvironment() const;
 
     int getId() const;
@@ -81,11 +83,13 @@ class Lander {
 
     bool isValidAction(const Action& action, const char** msg = nullptr) const;
 
+    bool step(const Action& action, bool check_valid = true);
+
   private:
 
-    friend Environment;
+    bool isLost() const;
 
-    bool step(const Action& action, bool check_valid = true);
+    LanderStatus getStatusAfterCollision(const Collision& collision) const;
 
     const Environment* _environment;
     int _id;
@@ -94,7 +98,6 @@ class Lander {
     double _rotation, _power, _fuel, _max_pow_inc, _max_rot_inc, _max_power,
            _rot_limit, _max_vy, _max_vx;
 };
-  
 
 } // mars namespace
 

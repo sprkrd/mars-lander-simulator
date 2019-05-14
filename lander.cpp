@@ -4,7 +4,7 @@
 
 mars::Lander::Lander() :
   _environment(nullptr),
-  _id(0),
+  _id(-1),
   _status(LanderStatus::FALLING),
   _position{0, 0},
   _velocity{0, 0},
@@ -60,6 +60,11 @@ void mars::Lander::setMaxVyForLanding(double max_vy) {
 
 void mars::Lander::setMaxVxForLanding(double max_vx) {
   _max_vx = max_vx;
+}
+
+void mars::Lander::assignEnvironment(const Environment* environment, int id) {
+  _environment = environment;
+  _id = id;
 }
 
 const mars::Environment* mars::Lander::getEnvironment() const {
@@ -146,25 +151,27 @@ bool mars::Lander::isValidAction(const Action& action, const char** msg) const {
   return true;
 }
 
+bool mars::Lander::isLost() const {
+  return not isBetween(0, _environment->getWidth(), _position.x) or
+         not isBetween(0, _environment->getHeight(), _position.y);
+}
+
 bool mars::Lander::step(const Action& action, bool check_valid) {
   if (check_valid) {
     const char* msg;
     if (not isValidAction(action, &msg))
       throw std::invalid_argument(msg);
   }
-  bool done = true;
+  double ts = _environment->getTimeStep();
   _power = action.power;
   _rotation = action.rotation;
-  double ts = _environment->getTimeStep();
   ParabolicTrajectory trajectory{getAcceleration(), _velocity, _position, ts};
   Collision collision;
   if (trajectory.collidesWith(_environment->getSurface(), collision)) {
     _velocity = collision.velocity;
     _position = collision.position;
     _fuel -= _power*collision.t;
-    bool is_good_landing = collision.segment.isHorizontal() and
-      isBetween(-_max_vx, _max_vx, _velocity.x) and _velocity.y >= -_max_vy;
-    _status = is_good_landing? LanderStatus::LANDED : LanderStatus::CRASHED;
+    _status = getStatusAfterCollision(collision);
   }
   else {
     _velocity = trajectory.velocity(ts);
@@ -172,13 +179,15 @@ bool mars::Lander::step(const Action& action, bool check_valid) {
     _fuel -= _power*ts;
     if (_fuel < _power)
       _power = _fuel;
-    bool lost = not isBetween(0, _environment->getWidth(), _position.x) or
-                not isBetween(0, _environment->getHeight(), _position.y);
-    if (lost)
+    if (isLost())
       _status = LanderStatus::LOST;
-    else
-      done = false;
   }
-  return done;
+  return _status != LanderStatus::FALLING;
+}
+
+mars::LanderStatus mars::Lander::getStatusAfterCollision(const Collision& collision) const {
+  bool is_good_landing = collision.segment.isHorizontal() and
+         isBetween(-_max_vx, _max_vx, _velocity.x) and _velocity.y >= -_max_vy;
+  return is_good_landing? LanderStatus::LANDED : LanderStatus::CRASHED;
 }
 

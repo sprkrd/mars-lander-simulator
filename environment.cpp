@@ -27,24 +27,27 @@ void mars::Environment::setSurface(const std::vector<Vector2D>& surface) {
   _surface = surface;
 }
 
-int mars::Environment::registerLander(const Lander& lander) {
-  _landers.push_back(lander);
-  _landers.back()._environment = this;
-  _landers.back()._id = _landers.size() - 1;
-  return _landers.back()._id;
-}
-
 void mars::Environment::reset() {
   _landers.clear();
   _total_time = 0;
 }
 
-int mars::Environment::getNumberOfLanders() const {
-  return _landers.size();
+mars::Lander& mars::Environment::createLander() {
+  _landers.emplace_back();
+  _landers.back().assignEnvironment(this, _landers.size()-1);
+  return _landers.back();
+}
+
+mars::Lander& mars::Environment::getLander(int id) {
+  return _landers[id];
 }
 
 const mars::Lander& mars::Environment::getLander(int id) const {
   return _landers[id];
+}
+
+int mars::Environment::getNumberOfLanders() const {
+  return _landers.size();
 }
 
 double mars::Environment::getWidth() const {

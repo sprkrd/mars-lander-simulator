@@ -15,6 +15,14 @@ class Environment {
   public:
     Environment();
 
+    Environment(const Environment& other) = delete;
+
+    Environment(Environment&& other) = delete;
+
+    Environment& operator=(const Environment& other) = delete;
+
+    Environment& operator=(Environment&& other) = delete;
+
     void setWidth(double width);
 
     void setHeight(double height);
@@ -25,13 +33,15 @@ class Environment {
 
     void setSurface(const std::vector<Vector2D>& surface);
 
-    int registerLander(const Lander& lander);
-
     void reset();
 
-    int getNumberOfLanders() const;
+    Lander& createLander();
+
+    Lander& getLander(int id);
 
     const Lander& getLander(int id) const;
+
+    int getNumberOfLanders() const;
 
     double getWidth() const;
 
